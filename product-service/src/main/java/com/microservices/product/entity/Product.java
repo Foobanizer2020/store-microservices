@@ -1,7 +1,6 @@
 package com.microservices.product.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.microservices.product.entity.Category;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -8,10 +8,6 @@ import javax.validation.constraints.Positive;
 
 import com.microservices.shopping.model.Product;
 
-//import com.microservices.shopping.model.Product;
-
-import java.io.Serializable;
-
 @Entity
 @Data
 public class InvoiceItem  {
