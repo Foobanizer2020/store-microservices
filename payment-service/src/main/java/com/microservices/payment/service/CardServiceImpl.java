@@ -3,10 +3,12 @@ package com.microservices.payment.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.microservices.payment.entity.Card;
 import com.microservices.payment.repository.CardRepository;
 
+@Service
 public class CardServiceImpl implements CardService {
 
 	@Autowired
@@ -29,12 +31,9 @@ public class CardServiceImpl implements CardService {
 
 	@Override
 	public Card create(Card card) {
-		Card cardDB = cardRepository.findById(card.getId()).orElse(null);
-		if (cardDB == null) {
-			card.setCvv(this.encryptCvv(card.getCvv()));
-			cardDB = cardRepository.save(card);
-		}
-		return cardDB;
+		card.setCvv(this.encryptCvv(card.getCvv()));
+		card = cardRepository.save(card);
+		return card;
 	}
 
 	@Override
@@ -69,6 +68,7 @@ public class CardServiceImpl implements CardService {
 		Card cardDB = this.read(id);
 		if (cardDB != null) {
 			cardDB.setBalance(cardDB.getBalance() + quantity);
+			cardDB = cardRepository.save(cardDB);
 		}
 		return cardDB;
 	}
