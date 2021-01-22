@@ -63,5 +63,14 @@ public class CardServiceImpl implements CardService {
 	private String encryptCvv(String cvv) {
 		return cvv;
 	}
+
+	@Override
+	public Card updateBalance(Long id, Long quantity) {
+		Card cardDB = this.read(id);
+		if (cardDB != null) {
+			cardDB.setBalance(cardDB.getBalance() + quantity);
+		}
+		return cardDB;
+	}
 	
 }

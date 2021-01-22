@@ -11,4 +11,5 @@ public interface CardService {
 	public Card create(Card card);
 	public Card update(Card card);
 	public Card delete(Card card);
+	public Card updateBalance(Long id, Long quantity);
 }
