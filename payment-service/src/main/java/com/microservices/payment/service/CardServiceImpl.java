@@ -14,32 +14,54 @@ public class CardServiceImpl implements CardService {
 	
 	@Override
 	public List<Card> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return cardRepository.findAll();
+	}
+	
+	@Override
+	public List<Card> getAllByCustomerId(Long id) {
+		return cardRepository.findByCustomerId(id);
 	}
 
 	@Override
-	public Card getById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Card read(Long id) {
+		return cardRepository.findById(id).orElse(null);
 	}
 
 	@Override
 	public Card create(Card card) {
-		// TODO Auto-generated method stub
-		return null;
+		Card cardDB = cardRepository.findById(card.getId()).orElse(null);
+		if (cardDB == null) {
+			card.setCvv(this.encryptCvv(card.getCvv()));
+			cardDB = cardRepository.save(card);
+		}
+		return cardDB;
 	}
 
 	@Override
 	public Card update(Card card) {
-		// TODO Auto-generated method stub
-		return null;
+		Card cardDB = read(card.getId());
+		if (cardDB != null) {
+			cardDB = cardRepository.save(card);
+		}
+		return cardDB;
 	}
 
 	@Override
 	public Card delete(Card card) {
-		// TODO Auto-generated method stub
-		return null;
+		Card cardDB = this.read(card.getId());
+		if (cardDB != null) {
+			cardRepository.delete(cardDB);
+		}
+		return cardDB;
 	}
 
+	/**
+	 * TODO: Encriptar el cvv
+	 * @param cvv
+	 * @return el cvv encriptado
+	 */
+	private String encryptCvv(String cvv) {
+		return cvv;
+	}
+	
 }

@@ -6,7 +6,8 @@ import com.microservices.payment.entity.Card;
 
 public interface CardService {
 	public List<Card> getAll();
-	public Card getById(Long id);
+	public List<Card> getAllByCustomerId(Long id);
+	public Card read(Long id);
 	public Card create(Card card);
 	public Card update(Card card);
 	public Card delete(Card card);
