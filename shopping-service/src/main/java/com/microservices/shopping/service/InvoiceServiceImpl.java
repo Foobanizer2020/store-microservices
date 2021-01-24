@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.microservices.shopping.client.CardClient;
 import com.microservices.shopping.client.CustomerClient;
 import com.microservices.shopping.client.ProductClient;
 //import com.microservices.shopping.client.CustomerClient;
@@ -36,16 +37,18 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Autowired
     ProductClient productClient;
 
+    @Autowired
+    CardClient cardClient;
+    
     @Override
     public List<Invoice> findInvoiceAll() {
         return  invoiceRepository.findAll();
     }
 
-
     @Override
     public Invoice createInvoice(Invoice invoice) {
-        Invoice invoiceDB = invoiceRepository.findByNumberInvoice ( invoice.getNumberInvoice () );
-        if (invoiceDB !=null){
+        Invoice invoiceDB = invoiceRepository.findByNumberInvoice(invoice.getNumberInvoice());
+        if (invoiceDB != null){
             return  invoiceDB;
         }
         invoice.setState("CREATED");
@@ -53,7 +56,14 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceDB.getItems().forEach( invoiceItem -> {
             productClient.updateStockProduct( invoiceItem.getProductId(), invoiceItem.getQuantity() * -1);
         });
-
+        
+        if (invoiceDB.getPaymentMethod().equals("CARD")) {
+        	cardClient.updateBalance(invoiceDB.getCardId(), - invoiceDB.getSubTotal());	
+        } else {
+        	invoiceDB.setPaymentMethod("CASH");
+        	invoiceDB = invoiceRepository.save(invoiceDB);
+        }
+        
         return invoiceDB;
     }
 
