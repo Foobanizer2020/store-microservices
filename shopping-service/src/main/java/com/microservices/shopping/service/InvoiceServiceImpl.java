@@ -11,6 +11,7 @@ import com.microservices.shopping.client.ProductClient;
 //import com.microservices.shopping.client.ProductClient;
 import com.microservices.shopping.entity.Invoice;
 import com.microservices.shopping.entity.InvoiceItem;
+import com.microservices.shopping.model.Card;
 import com.microservices.shopping.model.Customer;
 import com.microservices.shopping.model.Product;
 //import com.microservices.shopping.model.Customer;
@@ -57,10 +58,17 @@ public class InvoiceServiceImpl implements InvoiceService {
             productClient.updateStockProduct( invoiceItem.getProductId(), invoiceItem.getQuantity() * -1);
         });
         
-        if (invoiceDB.getPaymentMethod().equals("CARD")) {
-        	cardClient.updateBalance(invoiceDB.getCardId(), - invoiceDB.getSubTotal());	
-        } else {
-        	invoiceDB.setPaymentMethod("CASH");
+        Long cardId = invoice.getCardId();
+        if (cardId != null) {
+        	Card card = cardClient.getCard(cardId).getBody();
+        	String cardNumber = card.getNumber();
+        	if (cardNumber != null) {
+        		invoiceDB.setCardLastDigits(cardNumber.substring(cardNumber.length() - 4));
+        		cardClient.updateBalance(invoiceDB.getCardId(), - invoiceDB.getSubTotal());
+        	} else {
+        		invoiceDB.setPaymentMethod("CASH");
+        		invoiceDB.setCardId(null);
+        	}
         	invoiceDB = invoiceRepository.save(invoiceDB);
         }
         

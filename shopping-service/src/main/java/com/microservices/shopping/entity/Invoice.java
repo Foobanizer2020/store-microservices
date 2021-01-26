@@ -52,6 +52,9 @@ public class Invoice {
     @Column(name = "card_id", nullable = true)
     private Long cardId;
     
+    @Column(name = "card_last_digits", nullable = true)
+    private String cardLastDigits;
+    
     @Transient
     private Long subTotal;
     
