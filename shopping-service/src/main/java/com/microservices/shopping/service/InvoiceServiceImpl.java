@@ -42,6 +42,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     CardClient cardClient;
     
     @Override
+    public List<Invoice> findInvoiceAll(String status) {
+        return  invoiceRepository.findByState(status);
+    }
+    
+    @Override
     public List<Invoice> findInvoiceAll() {
         return  invoiceRepository.findAll();
     }

@@ -29,8 +29,13 @@ public class InvoiceRest {
 
     // -------------------Retrieve All Invoices--------------------------------------------
     @GetMapping
-    public ResponseEntity<List<Invoice>> listAllInvoices() {
-        List<Invoice> invoices = invoiceService.findInvoiceAll();
+    public ResponseEntity<List<Invoice>> listAllInvoices(@RequestParam(name = "state", required = false) String state) {
+        List<Invoice> invoices;
+        if (state == null) {
+        	invoices = invoiceService.findInvoiceAll();
+        } else {
+        	invoices = invoiceService.findInvoiceAll(state);
+        }
         if (invoices.isEmpty()) {
             return  ResponseEntity.noContent().build();
         }
