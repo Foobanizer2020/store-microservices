@@ -55,6 +55,9 @@ public class CardController {
 	@PostMapping
 	public ResponseEntity<Card> createCard(@Valid @RequestBody Card card) {
 		Card newCard = cardService.create(card);
+		if (newCard == null) {
+			return ResponseEntity.status(500).body(null);
+		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(newCard);
 	}
 	

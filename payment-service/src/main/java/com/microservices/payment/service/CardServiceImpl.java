@@ -2,15 +2,26 @@ package com.microservices.payment.service;
 
 import java.util.List;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.microservices.payment.entity.Card;
 import com.microservices.payment.repository.CardRepository;
+import com.microservices.payment.util.AESUtil;
 
 @Service
 public class CardServiceImpl implements CardService {
-
+	
+	@Value("${aes.password}")
+	private String aesPassword;
+	
+	@Value("${aes.salt}")
+	private String aesSalt;
+	
 	@Autowired
 	private CardRepository cardRepository;
 	
@@ -31,8 +42,13 @@ public class CardServiceImpl implements CardService {
 
 	@Override
 	public Card create(Card card) {
-		card.setCvv(this.encryptCvv(card.getCvv()));
-		card = cardRepository.save(card);
+		String cipherCvv = this.encryptCvv(card.getCvv());
+		if (cipherCvv != null) {
+			card.setCvv(this.encryptCvv(card.getCvv()));
+			card = cardRepository.save(card);
+		} else {
+			card = null;
+		}
 		return card;
 	}
 
@@ -60,7 +76,14 @@ public class CardServiceImpl implements CardService {
 	 * @return el cvv encriptado
 	 */
 	private String encryptCvv(String cvv) {
-		return cvv;
+		try {
+			SecretKey key = AESUtil.getKeyFrompassword(this.aesPassword, this.aesSalt);
+			IvParameterSpec iv = AESUtil.generateIv();
+			String cipherCvv = AESUtil.encrypt("AES/CBC/PKCS5Padding", cvv, key, iv);
+			return cipherCvv;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	@Override
