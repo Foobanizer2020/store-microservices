@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.microservices.customer.repository.CustomerRepository;
+import com.microservices.customer.client.PaymentClient;
 import com.microservices.customer.entity.Customer;
 import com.microservices.customer.entity.Region;
 
@@ -12,6 +13,8 @@ import java.util.List;
 @Slf4j
 @Service
 public class CustomerServiceImpl  implements CustomerService {
+	@Autowired
+	PaymentClient paymentClient;
 
     @Autowired
     CustomerRepository customerRepository;
