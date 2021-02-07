@@ -8,6 +8,7 @@ import com.microservices.customer.repository.CustomerRepository;
 import com.microservices.customer.client.PaymentClient;
 import com.microservices.customer.entity.Customer;
 import com.microservices.customer.entity.Region;
+import com.microservices.customer.model.Card;
 
 import java.util.List;
 @Slf4j
@@ -68,6 +69,11 @@ public class CustomerServiceImpl  implements CustomerService {
 
     @Override
     public Customer getCustomer(Long id) {
-        return  customerRepository.findById(id).orElse(null);
+        Customer customer = customerRepository.findById(id).orElse(null);
+        if (customer != null) {
+        	List<Card> cards = this.paymentClient.listCard(customer.getId()).getBody();
+        	customer.setCards(cards);
+        }
+        return customer;
     }
 }
